@@ -28,7 +28,7 @@ This is a boilerplate project for building backend applications using Express an
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/express-typescript-starter-kit.git
+    git clone https://github.com/Saim-Al-Ifran/express-typescript-starter-kit.git
     ```
 
 2. **Navigate to the project directory:**
