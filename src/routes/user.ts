@@ -1,7 +1,7 @@
 import express from 'express';
 import { deleteUser, getAllUsers } from '../controllers/user/user';
 import authenticate from '../middlewares/auth/authenticate';
-import authorizeAdmin from '../middlewares/auth/authorizeAdmin';
+import authorizeAdmin from '../middlewares/auth/authorizeAdmin'; 
 const router = express.Router();
 
 //admin routes

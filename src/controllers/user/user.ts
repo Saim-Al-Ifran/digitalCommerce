@@ -2,11 +2,21 @@ import { Request, Response, NextFunction } from 'express';
 import User from "../../models/User";
 import CustomError from '../../utils/errors/customError';
 import { TryCatch } from '../../middlewares/TryCatch';
+import paginate from '../../utils/paginate';
+import { CustomRequest } from '../../types/type';
 
-export const getAllUsers = TryCatch(async (_req: Request, res: Response, next: NextFunction) => {
-    const users = await User.find({ role: 'user' });
+export const getAllUsers = TryCatch(async (req: CustomRequest, res: Response, next: NextFunction) => {
     
-    if (users.length === 0) {
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
+
+    if (page <= 0 || limit <= 0) {
+        return next(new CustomError('Invalid page or limit parameters', 400));
+    }
+
+    const users = await paginate(User,{ role: 'user' },page,limit);
+    
+    if (users.data.length === 0) {
         return next(new CustomError('No users found', 404));
     }
 

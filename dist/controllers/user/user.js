@@ -16,9 +16,15 @@ exports.deleteUser = exports.getAllUsers = void 0;
 const User_1 = __importDefault(require("../../models/User"));
 const customError_1 = __importDefault(require("../../utils/errors/customError"));
 const TryCatch_1 = require("../../middlewares/TryCatch");
-exports.getAllUsers = (0, TryCatch_1.TryCatch)((_req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield User_1.default.find({ role: 'user' });
-    if (users.length === 0) {
+const paginate_1 = __importDefault(require("../../utils/paginate"));
+exports.getAllUsers = (0, TryCatch_1.TryCatch)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    if (page <= 0 || limit <= 0) {
+        return next(new customError_1.default('Invalid page or limit parameters', 400));
+    }
+    const users = yield (0, paginate_1.default)(User_1.default, { role: 'user' }, page, limit);
+    if (users.data.length === 0) {
         return next(new customError_1.default('No users found', 404));
     }
     res.status(200).json(users);
