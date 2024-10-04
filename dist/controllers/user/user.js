@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.getAllUsers = void 0;
+exports.deleteUser = exports.toggleActivation = exports.getAllUsers = void 0;
 const User_1 = __importDefault(require("../../models/User"));
 const customError_1 = __importDefault(require("../../utils/errors/customError"));
 const TryCatch_1 = require("../../middlewares/TryCatch");
@@ -28,6 +28,31 @@ exports.getAllUsers = (0, TryCatch_1.TryCatch)((req, res, next) => __awaiter(voi
         return next(new customError_1.default('No users found', 404));
     }
     res.status(200).json(users);
+}));
+exports.toggleActivation = (0, TryCatch_1.TryCatch)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { action } = req.body;
+    const user = yield User_1.default.findOne({ _id: id }).select('-password');
+    if (!user) {
+        return next(new customError_1.default('User not found', 404));
+    }
+    if (action === 'activate') {
+        if (user.isActive) {
+            return next(new customError_1.default('User is already active', 400));
+        }
+        user.isActive = true;
+        yield user.save();
+        return res.status(200).json({ message: 'User activated successfully', user });
+    }
+    if (action === 'deactivate') {
+        if (!user.isActive) {
+            return next(new customError_1.default('User is already inactive', 400));
+        }
+        user.isActive = false;
+        yield user.save();
+        return res.status(200).json({ message: 'User deactivated successfully', user });
+    }
+    return next(new customError_1.default('Invalid action', 400));
 }));
 exports.deleteUser = (0, TryCatch_1.TryCatch)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;

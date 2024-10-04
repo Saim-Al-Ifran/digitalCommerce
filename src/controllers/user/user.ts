@@ -23,6 +23,37 @@ export const getAllUsers = TryCatch(async (req: CustomRequest, res: Response, ne
     res.status(200).json(users);
 });
 
+export const toggleActivation = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { action } = req.body; 
+  
+    const user = await User.findOne({ _id: id }).select('-password');
+    
+    if (!user) {
+      return next(new CustomError('User not found', 404));
+    }
+  
+    if (action === 'activate') {
+      if (user.isActive) {
+        return next(new CustomError('User is already active', 400));
+      }
+      user.isActive = true;
+      await user.save();
+      return res.status(200).json({ message: 'User activated successfully', user });
+    }
+  
+    if (action === 'deactivate') {
+      if (!user.isActive) {
+        return next(new CustomError('User is already inactive', 400));
+      }
+      user.isActive = false;
+      await user.save();
+      return res.status(200).json({ message: 'User deactivated successfully', user });
+    }
+  
+    return next(new CustomError('Invalid action', 400));
+  });
+  
 
 export const deleteUser = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;

@@ -11,4 +11,5 @@ const router = express_1.default.Router();
 //admin routes
 router.get('/users', authenticate_1.default, authorizeAdmin_1.default, user_1.getAllUsers);
 router.delete('/users/:id', authenticate_1.default, authorizeAdmin_1.default, user_1.deleteUser);
+router.patch('/users/:id/toggle-activation', authenticate_1.default, authorizeAdmin_1.default, user_1.toggleActivation);
 exports.default = router;
