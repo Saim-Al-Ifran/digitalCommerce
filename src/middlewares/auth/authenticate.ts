@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { secretKey } from '../secret';
-import CustomError from '../utils/errors/customError';
-import User from '../models/User';
-
+import User from '../../models/User';
+import { secretKey } from '../../secret';
+import CustomError from '../../utils/errors/customError';
+ 
 
 interface DecodedToken {
     id: string;
