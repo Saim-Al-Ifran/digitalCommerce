@@ -16,3 +16,13 @@ export interface IUser extends Document {
     matchPassword: (password: string) => Promise<boolean>;
   }
   
+export interface ICategory extends Document {
+    title: string;
+    description: string;
+    image?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+ 
+  
