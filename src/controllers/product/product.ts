@@ -7,6 +7,7 @@ import paginate from '../../utils/paginate';
 import { CustomRequest } from '../../types/type';
 import Category from '../../models/Category';
 import { SortOrder } from 'mongoose';
+import { deleteFileFromCloudinary } from '../../utils/delFileFromCloudinary';
 
 // Add a new product
 export const addProduct = TryCatch (async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
@@ -83,4 +84,49 @@ export const getProductById = TryCatch(async (req: Request, res: Response, next:
         res.status(200).json(product);
  
 });
+
+export const updateProductById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const productId = req.params.id;
+        const updatedData = req.body;
+        const imageFile = req.file;
+
+        if (imageFile) {
+            const result = await uploadFileToCloudinary(imageFile);
+            updatedData.image = result.secure_url;
+            const existingProduct = await Product.findById(productId );
+
+            if (existingProduct && existingProduct.image) {
+              await deleteFileFromCloudinary(existingProduct.image);
+            }
+          }
+
+        const updatedProduct = await Product.findByIdAndUpdate(productId, updatedData, { new: true });
+        if (!updatedProduct) {
+            throw new CustomError('Product not found', 404);
+        }
+        res.status(200).json(updatedProduct);
+    } catch (error: any) {
+        next(new CustomError(error.message, 500));
+    }
+};
+
+export const deleteProductById = TryCatch(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    console.log('Delete endpoint hit');
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+      return next(new CustomError('Product not found', 404));
+    }
+    if (product.image) {
+      await deleteFileFromCloudinary(product.image);
+    }
+  
+    // Delete the product
+    await Product.findByIdAndDelete(productId);
+    
+    res.status(200).json({ message: 'Product deleted successfully' });
+  });
+  
  

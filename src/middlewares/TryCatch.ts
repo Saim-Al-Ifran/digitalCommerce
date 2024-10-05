@@ -1,6 +1,7 @@
-import { Request,NextFunction,Response } from "express";
+import { Request, NextFunction, Response } from 'express';
+
 export const TryCatch = (fn: Function) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        fn(req, res, next).catch(next);
-    };
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
 };

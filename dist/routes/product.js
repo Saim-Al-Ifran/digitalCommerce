@@ -13,4 +13,6 @@ router.get('/products', product_1.getAllProducts);
 router.get('/products/:id', product_1.getProductById);
 // Admin routes
 router.post('/products', authenticate_1.default, authorizeAdmin_1.default, uploadFile_1.default.single('image'), product_1.addProduct);
+router.put('/products/:id', authenticate_1.default, authorizeAdmin_1.default, uploadFile_1.default.single('image'), product_1.updateProductById);
+router.delete('/products/:id', authenticate_1.default, authorizeAdmin_1.default, product_1.deleteProductById);
 exports.default = router;
