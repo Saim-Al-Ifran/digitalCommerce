@@ -1,5 +1,5 @@
 
-import{Document} from 'mongoose';
+import mongoose,{Document} from 'mongoose';
 
 interface IRefreshToken {
     token: string;
@@ -22,6 +22,18 @@ export interface ICategory extends Document {
     image?: string;
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface IProduct extends Document {
+  name: string;
+  description: string;
+  price: number;
+  image?: string;
+  rating: number;
+  stockQuantity: number;
+  category: mongoose.Schema.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
  
