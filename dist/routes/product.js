@@ -9,6 +9,8 @@ const authenticate_1 = __importDefault(require("../middlewares/auth/authenticate
 const authorizeAdmin_1 = __importDefault(require("../middlewares/auth/authorizeAdmin"));
 const uploadFile_1 = __importDefault(require("../middlewares/uploadFile/uploadFile"));
 const router = (0, express_1.Router)();
-// POST /products - Add a new product
+router.get('/products', product_1.getAllProducts);
+router.get('/products/:id', product_1.getProductById);
+// Admin routes
 router.post('/products', authenticate_1.default, authorizeAdmin_1.default, uploadFile_1.default.single('image'), product_1.addProduct);
 exports.default = router;
