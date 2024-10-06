@@ -129,4 +129,23 @@ export const deleteProductById = TryCatch(async (req: Request, res: Response, ne
     res.status(200).json({ message: 'Product deleted successfully' });
   });
   
- 
+ //  Fetch products in a specific category
+export const getProductsByCategory = TryCatch(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  
+    const categoryId = req.params.category;
+    const products = await Product.find({ category: categoryId });
+    if(products.length === 0){
+        return next(new CustomError('No products found in this category', 404));
+    }
+    res.status(200).json(products);
+       
+});
+
+// Fetch products with low inventory
+export const getLowInventoryProducts = TryCatch(async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const lowInventoryProducts = await Product.find({ stockQuantity: { $lt: 10 } });
+        if(lowInventoryProducts.length === 0){
+            return next(new CustomError('No products with low inventory', 404));
+        }
+        res.status(200).json(lowInventoryProducts);
+});

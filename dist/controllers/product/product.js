@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductById = exports.updateProductById = exports.getProductById = exports.getAllProducts = exports.addProduct = void 0;
+exports.getLowInventoryProducts = exports.getProductsByCategory = exports.deleteProductById = exports.updateProductById = exports.getProductById = exports.getAllProducts = exports.addProduct = void 0;
 const Product_1 = __importDefault(require("../../models/Product"));
 const customError_1 = __importDefault(require("../../utils/errors/customError"));
 const fileUpload_1 = require("../../utils/fileUpload");
@@ -120,4 +120,21 @@ exports.deleteProductById = (0, TryCatch_1.TryCatch)((req, res, next) => __await
     // Delete the product
     yield Product_1.default.findByIdAndDelete(productId);
     res.status(200).json({ message: 'Product deleted successfully' });
+}));
+//  Fetch products in a specific category
+exports.getProductsByCategory = (0, TryCatch_1.TryCatch)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const categoryId = req.params.category;
+    const products = yield Product_1.default.find({ category: categoryId });
+    if (products.length === 0) {
+        return next(new customError_1.default('No products found in this category', 404));
+    }
+    res.status(200).json(products);
+}));
+// Fetch products with low inventory
+exports.getLowInventoryProducts = (0, TryCatch_1.TryCatch)((_req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const lowInventoryProducts = yield Product_1.default.find({ stockQuantity: { $lt: 10 } });
+    if (lowInventoryProducts.length === 0) {
+        return next(new customError_1.default('No products with low inventory', 404));
+    }
+    res.status(200).json(lowInventoryProducts);
 }));
